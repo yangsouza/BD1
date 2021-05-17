@@ -34,7 +34,9 @@ CREATE TABLE IF NOT EXISTS Produtos (
   Codigo_Produto INT NOT NULL,
   Descricao VARCHAR(45) NULL,
   Valor INT NULL,
-  PRIMARY KEY (Codigo_Produto)
+  PRIMARY KEY (Codigo_Produto),
+  CONSTRAINT Fornecedor_Estoque
+    FOREIGN KEY (Codigo_Estoque) REFERENCES Estoque (Codigo_Estoque)
 )
 DROP TABLE IF EXISTS Funcionario;
 
@@ -51,7 +53,7 @@ CREATE TABLE IF NOT EXISTS Entregador (
   Nome INT NOT NULL,
   id_Funcionario INT NOT NULL,
   Clientes_Telefone INT NOT NULL,
-  PRIMARY KEY (Nome, id_Funcionario),
+  PRIMARY KEY (id_Funcionario),
   CONSTRAINT Entregador_Funcionario
     FOREIGN KEY (id_Funcionario) REFERENCES Funcionario (id_Funcionario),
   CONSTRAINT Entregador_Clientes
@@ -63,19 +65,19 @@ CREATE TABLE IF NOT EXISTS Fornecedor (
   id_Fornecedor INT NOT NULL,
   Nome VARCHAR(45) NULL,
   Telefone INT NULL,
-  PRIMARY KEY (id_Fornecedor)
+  PRIMARY KEY (id_Fornecedor),
+  CONSTRAINT Fornecedor_Estoque
+    FOREIGN KEY (Codigo_Estoque) REFERENCES Estoque (Codigo_Estoque)
 )
 DROP TABLE IF EXISTS Estoque;
 
 CREATE TABLE IF NOT EXISTS Estoque (
+  Codigo_Estoque INT,
   Quantidade INT NULL,
   Alerta REAL NULL,
   Codigo_Produto INT NOT NULL,
   id_Fornecedor INT NOT NULL,
-  CONSTRAINT Estoque_Produtos
-    FOREIGN KEY (Codigo_Produto) REFERENCES Produtos (Codigo_Produto),
-  CONSTRAINT Estoque_Fornecedor
-    FOREIGN KEY (Fornecedor_idFornecedor) REFERENCES Fornecedor (id_Fornecedor)
+  PRIMARY  KEY (Codigo_Estoque)
 )
 DROP TABLE IF EXISTS Pizza;
 
@@ -116,9 +118,9 @@ CREATE TABLE IF NOT EXISTS Atendente (
   Nome INT NOT NULL,
   id_Funcionario INT NOT NULL,
   Num_Pedido INT NOT NULL,
-  PRIMARY KEY (Nome, Funcionario_idFuncionario),
+  PRIMARY KEY (idFuncionario),
   CONSTRAINT Atendente_Funcionario
-    FOREIGN KEY (Funcionario_idFunc) REFERENCES Funcionario (idFuncionario)
+    FOREIGN KEY (id_Funcionario) REFERENCES Funcionario (idFuncionario)
   CONSTRAINT Atendente_Pedido
     FOREIGN KEY (Num_Pedido) REFERENCES Pedido (Num_Pedido)
 )
@@ -128,7 +130,8 @@ DROP TABLE IF EXISTS Cliente_Fidelidade;
 CREATE TABLE IF NOT EXISTS Cliente_Fidelidade (
   Qtdpedido INT NOT NULL,
   Telefone_Cliente INT NULL,
-  PRIMARY KEY (Telefone_Cliente),
+  Alerta_Periodo STATUS,
+  PRIMARY KEY (Telefone_Cliente,Qtdpedido),
   CONSTRAINT Fidelidade_Clientes
     FOREIGN KEY (Telefone_Cliente) REFERENCES Clientes (Telefone_Cliente)
 )
